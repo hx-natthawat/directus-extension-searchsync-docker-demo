@@ -2,21 +2,20 @@
 
 ⚠️ Disclaimer: Only tested with Meilisearch, Windows 11 and Docker Desktop.
 
-
-
-
 ## 1. Have a running instance of your search service
 
 Example: Meilisearch running as a separate docker container and available at http://localhost:7700
 
+Remark:
+All get master API key that setup to MeiliSearch and then request admin API key for setup in step 2. (your-api-key)
 
 ## 2. Modify the searchsync.config.cjs
 
 ```js
 server: {
-    type: 'meilisearch',                        
+    type: 'meilisearch',
     host: 'http://host.docker.internal:7700',   // accessing localhost within a container
-    key: '<your-api-key>',                  
+    key: '<your-api-key>',
   },
    reindexOnStart: true,                        // Need ""true" for this tutorial
    collections: {
@@ -38,7 +37,6 @@ docker compose -f docker-compose.yml up --build
 
 If you see this, you know all is fine. We haven't created the collection yet.
 
-
 ## 5. Login to Directus with http://localhost:8055
 
 ```
@@ -52,11 +50,9 @@ ADMIN_PASSWORD=123qweasd
 
 ![step_6_create_collection](https://user-images.githubusercontent.com/62059415/227745170-a3ab95b0-b4da-4efc-98e5-1e0a30686ecc.png)
 
-
 ## 7. Create first item
 
 ![step_7_item](https://user-images.githubusercontent.com/62059415/227745752-30588489-6325-4c7d-b65f-96fe0fce3f00.png)
-
 
 ## 8. Restart Docker Containers
 
@@ -65,15 +61,14 @@ ADMIN_PASSWORD=123qweasd
 pressing `CTRL+C` (Windows) to cancel running command
 
 ### Start containers:
+
 ```bash
 docker compose -f docker-compose.yml up
 ```
 
-
 ## 9. Check - No warning
 
 ![step_9_check](https://user-images.githubusercontent.com/62059415/227745489-5b9709ec-5171-416c-a3e3-9fb2d9ec2e71.png)
-
 
 ## 10. Check - Meilisearch Dashboard at http://localhost:7700
 
