@@ -17,7 +17,8 @@ USER node
 # First we copy the config file, then we install the extension.
 COPY searchsync.config.cjs ./ 
 RUN pnpm i dimitrov-adrian/directus-extension-searchsync
-# RUN pnpm i u12206050/directus-extension-global-search // Error
+# RUN pnpm i hx-natthawat/directus-extension-global-search // Build Error
+# RUN pnpm i u12206050/directus-extension-global-search // Build Error
 # RUN pnpm install directus-extension-editorjs other-extensions
 # RUN pnpm i moment uuid
 # RUN pnpm i directus-extension-schema-management-module
