@@ -8,20 +8,22 @@ volumes:
   uploads:
   cache:
   database:
+  data.ms:
 
 # define the networks that will be used by the services
 networks:
-  directus:
+  hx-jaroen-stacks:
 
 # define the services that will be used by the application
 services:
   database:
     container_name: database
-    image: postgres:15-alpine
+    # image: postgres:15-alpine
+    image: postgis/postgis:16-3.4
     volumes:
       - data:/var/lib/postgresql/data
     networks:
-      - directus
+      - hx-jaroen-stacks
     ports:
       - 5432
     env_file: .env
@@ -30,20 +32,20 @@ services:
     container_name: cache
     image: redis:7-alpine
     networks:
-      - directus
+      - hx-jaroen-stacks
     volumes:
       - cache:/data
     ports:
       - 6379
     env_file: .env
 
-# define the custom directus service
-  custom-directus:
-    container_name: custom-directus
+  # define the custom directus service
+  cms:
+    container_name: directus
     # build the image from the Dockerfile in the current directory
     # ---
-    build: 
-      context: ./
+    build:
+      context: .
       dockerfile: Dockerfile
     # ---
     ports:
@@ -54,8 +56,39 @@ services:
       - uploads:/directus/uploads
       - database:/directus/database
     networks:
-      - directus
+      - hx-jaroen-stacks
     depends_on:
       - cache
       - database
+      - search
     env_file: .env
+
+  # define Meilisearch
+  search:
+    container_name: meilisearch
+    image: getmeili/meilisearch:v1.6.2
+    environment:
+      - http_proxy
+      - https_proxy
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterKey}
+      - MEILI_NO_ANALYTICS=${MEILI_NO_ANALYTICS:-true}
+      - MEILI_ENV=${MEILI_ENV:-development}
+      - MEILI_LOG_LEVEL
+      - MEILI_DB_PATH=${MEILI_DB_PATH:-/data.ms}
+    ports:
+      - ${MEILI_PORT:-7700}:7700
+    networks:
+      - hx-jaroen-stacks
+    volumes:
+      - ./data.ms:/data.ms
+    restart: unless-stopped
+    env_file: .env
+
+  search-ui:
+    container_name: meilisearch-ui
+    image: riccoxie/meilisearch-ui:latest
+    ports:
+      - ${MEILIUI_PORT:-24900}:24900
+    depends_on:
+      - search
+    restart: always
